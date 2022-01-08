@@ -463,7 +463,7 @@ DWORD Get()
 DWORD Put()
 {
 
-    HANDLE 			hFile;
+    FILE 	    *hFile;
 
     char            szFileSpec[MAX_PATH];
     char*           pFileName;
@@ -570,7 +570,7 @@ DWORD Put()
         FmtName(File.szName, File.szType, (strcmp(typeid(*gpOSI).name()+2, "CPM") ? "/" : "."), szFile);
 
         // Print the filenames
-        printf("%-12s -> %-12s\t", szFileSpec, szFile);
+        printf("%-12s/%-12s -> %-12s\t", szFileSpec, file_name, szFile);
 
         // Check whether the file size is valid
         if (File.dwSize > MAX_FILE_SIZE )
@@ -580,9 +580,9 @@ DWORD Put()
         }
 
         // Open the Windows file
-        if ( (hFile = fopen(szFileSpec, "r")) == NULL)
+        if ( (hFile = fopen(file_name, "r")) == NULL)
         {
-            printf("Can't open: %s\n", szFileSpec);
+            printf("Can't open: %s\n", file_name);
             continue;
         }
 
@@ -590,7 +590,8 @@ DWORD Put()
         // Read file contents to the buffer
         if (dwBytes != File.dwSize)
         {
-			fprintf(stderr,"Read error: %s\n", szFile);
+			fprintf(stderr,"Read error: %s - bytes read %d, expected %d \n", szFile, dwBytes,File.dwSize);
+                        perror("Returned error ");
             fclose(hFile);
             continue;
         }
